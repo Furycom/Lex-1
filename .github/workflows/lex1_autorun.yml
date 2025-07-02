@@ -2,30 +2,29 @@ name: Lex1 Autorun
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
-  write-test:
+  run-lex1:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "Lex1"
-          git config --global user.email "lex1-actions@furycom"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-      - name: Create test file
+      - name: Configure SSH
         run: |
-          echo "Test d’écriture par Lex1 - $(date)" > lex1_write_test.txt
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Commit and push
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Run Lex1 loop
         run: |
-          git add lex1_write_test.txt
-          git commit -m "Lex1 test write file"
-          git push origin main
+          python lex1_loop.py
