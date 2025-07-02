@@ -9,15 +9,7 @@ def main():
 
         print("Fichier 'yann.md' créé localement dans le dépôt.")
         
-        os.system("git config user.email 'lex1@furycom.org'")
-        os.system("git config user.name 'Lex-1'")
-        os.system("git add data/yann.md")
-        os.system("git commit -m 'Test: création automatique du fichier yann.md'")
-        
-        print("Les commandes git add et commit ont été exécutées.")
-        print("ATTENTION : git push désactivé temporairement pour éviter le blocage.")
-        
-        # subprocess.run(["git", "push", "origin", "main"], check=True)
+        print("Le fichier est prêt à être committé et poussé par le workflow.")
 
     except Exception as e:
         print(f"Erreur détectée : {e}")
