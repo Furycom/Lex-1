@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  run-lex1:
+  main:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,13 +18,27 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-
       - name: Run Lex1 loop
         run: |
           python lex1_loop.py
+
+      - name: Commit changes
+        run: |
+          git config user.email "lex1@furycom.org"
+          git config user.name "Lex-1"
+          git add data/yann.md
+          git commit -m "Update yann.md" || echo "No changes to commit"
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
+
+      - name: Push changes
+        if: github.actor == 'Furycom'
+        run: |
+          git push origin main
