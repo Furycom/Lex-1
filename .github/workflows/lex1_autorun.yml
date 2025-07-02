@@ -1,0 +1,20 @@
+name: Lex1 Autorun
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  push:
+    branches:
+      - main
+
+jobs:
+  run-lex1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Run Lex1 Loop
+        run: python lex1_loop.py
